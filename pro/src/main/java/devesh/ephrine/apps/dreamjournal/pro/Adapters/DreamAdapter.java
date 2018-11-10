@@ -1,7 +1,10 @@
 package devesh.ephrine.apps.dreamjournal.pro.Adapters;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -48,13 +51,38 @@ public class DreamAdapter extends RecyclerView.Adapter<DreamAdapter.DreamViewHol
         holder.dateTextView.setText(dreamList.get(position).getDate());
         holder.dreamTextView.setText(dreamList.get(position).getDream());
 
+        //Getting the Dream object at position
+        final Dream dream = dreamList.get(position);
+
         holder.deleteImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dream dream = dreamList.get(position);
-                appDatabase.dreamDao().deleteDream(dream);
-                dreamList.remove(position);
-                notifyDataSetChanged();
+
+                //Creating Alert Dialog for confirming delete action
+                final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+                alertDialog.setTitle("Delete Journal");
+                alertDialog.setMessage("Are you sure you want to delete this journal?");
+
+                //Setting positive button AlertDialog
+                alertDialog.setButton(Dialog.BUTTON_POSITIVE, "DELETE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        appDatabase.dreamDao().deleteDream(dream);
+                        dreamList.remove(position);
+                        notifyDataSetChanged();
+                    }
+                });
+
+                //Setting negative button for AlertDialog
+                alertDialog.setButton(Dialog.BUTTON_NEGATIVE, "CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        alertDialog.dismiss();
+                    }
+                });
+
+                alertDialog.show();
+
             }
         });
     }
