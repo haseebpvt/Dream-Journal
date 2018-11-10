@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import devesh.ephrine.apps.dreamjournal.pro.CreateDreamActivity;
 import devesh.ephrine.apps.dreamjournal.pro.Data.Dream;
 import devesh.ephrine.apps.dreamjournal.pro.Database.AppDatabase;
 import devesh.ephrine.apps.dreamjournal.pro.R;
@@ -54,6 +56,7 @@ public class DreamAdapter extends RecyclerView.Adapter<DreamAdapter.DreamViewHol
         //Getting the Dream object at position
         final Dream dream = dreamList.get(position);
 
+        //Delete button
         holder.deleteImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,6 +88,16 @@ public class DreamAdapter extends RecyclerView.Adapter<DreamAdapter.DreamViewHol
 
             }
         });
+
+        //Edit button
+        holder.editImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, CreateDreamActivity.class);
+                intent.putExtra("dream_id", dream.getId());
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -99,6 +112,7 @@ public class DreamAdapter extends RecyclerView.Adapter<DreamAdapter.DreamViewHol
         TextView dreamTextView;
         CardView dreamCardView;
         ImageView deleteImageView;
+        ImageView editImageView;
 
         public DreamViewHolder(View itemView) {
             super(itemView);
@@ -108,6 +122,7 @@ public class DreamAdapter extends RecyclerView.Adapter<DreamAdapter.DreamViewHol
             dreamTextView = itemView.findViewById(R.id.dreamTextView);
             dreamCardView = itemView.findViewById(R.id.dream_card_view);
             deleteImageView = itemView.findViewById(R.id.deleteImageView);
+            editImageView = itemView.findViewById(R.id.editImageView);
         }
     }
 }

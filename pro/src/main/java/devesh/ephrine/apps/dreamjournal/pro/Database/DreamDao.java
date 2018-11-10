@@ -4,6 +4,8 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.RawQuery;
+import android.arch.persistence.room.Update;
 
 import java.util.List;
 
@@ -20,5 +22,11 @@ public interface DreamDao {
 
     @Delete
     void deleteDream(Dream dream);
+
+    @Update
+    void updateDream(Dream dream);
+
+    @Query("SELECT * FROM dream WHERE dream.id = id")
+    Dream getDream(int id);
 
 }
