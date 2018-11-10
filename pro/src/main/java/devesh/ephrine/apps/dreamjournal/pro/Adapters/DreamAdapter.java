@@ -95,6 +95,7 @@ public class DreamAdapter extends RecyclerView.Adapter<DreamAdapter.DreamViewHol
             public void onClick(View v) {
                 Intent intent = new Intent(context, CreateDreamActivity.class);
                 intent.putExtra("dream_id", dream.getId());
+                intent.putExtra("type", "type_edit");
                 context.startActivity(intent);
             }
         });

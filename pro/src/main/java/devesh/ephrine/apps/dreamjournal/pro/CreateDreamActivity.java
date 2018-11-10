@@ -2,6 +2,7 @@ package devesh.ephrine.apps.dreamjournal.pro;
 
 import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
@@ -18,7 +19,17 @@ import devesh.ephrine.apps.dreamjournal.pro.Database.AppDatabase;
 
 public class CreateDreamActivity extends AppCompatActivity {
 
+    //Views
+    private TextInputEditText TitleTx;
+    private TextInputEditText DreamTx;
+    private TextInputEditText DateTxt;
+    private TextView Date;
+
     private AppDatabase appDatabase;
+    private Bundle bundle;
+
+    //Variables
+    private int id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,22 +37,47 @@ public class CreateDreamActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_dream);
         getSupportActionBar().setTitle("Add Dream");
 
-        Calendar c = Calendar.getInstance();
+        //Initializing views
+        TitleTx = findViewById(R.id.TxTitle);
+        DreamTx = findViewById(R.id.DreamTxt);
+        DateTxt = findViewById(R.id.InputDate);
+        Date = findViewById(R.id.TextViewDateTx);
+        DateTxt = findViewById(R.id.InputDate);
 
-        int Tdt=c.get(Calendar.DATE);
-        int Tmonth=c.get(Calendar.MONTH);
-        Tmonth=Tmonth+1;
-        int Tyear=c.get(Calendar.YEAR);
-        String Datatx=String.valueOf(Tdt)+"/"+String.valueOf(Tmonth)+"/"+String.valueOf(Tyear);
-        TextInputEditText DateTxt = findViewById(R.id.InputDate);
-        DateTxt.setText(Datatx);
-
-        TextView Date = findViewById(R.id.TextViewDateTx);
-        Date.setText("Today's Date: "+Datatx);
-
+        //Database
         appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "dream_database")
                 .allowMainThreadQueries()
                 .build();
+
+        //Getting extras
+        bundle = getIntent().getExtras();
+
+        if (bundle != null && bundle.getString("type").equals("type_edit")){
+            id = bundle.getInt("dream_id");
+
+            Dream dream = appDatabase.dreamDao().getDream(id);
+
+            TitleTx.setText(dream.getTitle());
+            DreamTx.setText(dream.getDream());
+            DateTxt.setText(dream.getDate());
+            Date.setText("Dream date: " + dream.getDate());
+
+            DreamTx.setSelected(true);
+        } else {
+
+            Calendar c = Calendar.getInstance();
+
+            int Tdt=c.get(Calendar.DATE);
+            int Tmonth=c.get(Calendar.MONTH);
+            Tmonth=Tmonth+1;
+            int Tyear=c.get(Calendar.YEAR);
+            String Datatx=String.valueOf(Tdt)+"/"+String.valueOf(Tmonth)+"/"+String.valueOf(Tyear);
+
+            DateTxt.setText(Datatx);
+            Date.setText("Today's Date: "+Datatx);
+
+        }
+
     }
 
     @Override
@@ -92,17 +128,21 @@ public class CreateDreamActivity extends AppCompatActivity {
 
     public void Save(){
 
-        TextInputEditText TitleTx = findViewById(R.id.TxTitle);
-        TextInputEditText DreamTx = findViewById(R.id.DreamTxt);
-        TextInputEditText DateTxt = findViewById(R.id.InputDate);
-
         if(DreamTx.getText().toString()=="" || DreamTx==null || DreamTx.getText().toString().equals("") || DreamTx.getText().toString().equals(" ")){
 
         } else{
             String Datetx=DateTxt.getText().toString();
 
-            Dream dream = new Dream(Datetx, TitleTx.getText().toString(), DreamTx.getText().toString());
-            appDatabase.dreamDao().insertDream(dream);
+            if (bundle != null && bundle.getString("type").equals("type_edit")) {
+                Dream d = appDatabase.dreamDao().getDream(bundle.getInt("dream_id"));
+                d.setTitle(TitleTx.getText().toString());
+                d.setDream(DreamTx.getText().toString());
+                d.setDate(DateTxt.getText().toString());
+                appDatabase.dreamDao().updateDream(d);
+            } else {
+                Dream dream = new Dream(Datetx, TitleTx.getText().toString(), DreamTx.getText().toString());
+                appDatabase.dreamDao().insertDream(dream);
+            }
         }
 
     }

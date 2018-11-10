@@ -26,7 +26,7 @@ public interface DreamDao {
     @Update
     void updateDream(Dream dream);
 
-    @Query("SELECT * FROM dream WHERE dream.id = id")
+    @Query("SELECT * FROM dream WHERE dream.id = :id")
     Dream getDream(int id);
 
 }
