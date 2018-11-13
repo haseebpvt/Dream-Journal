@@ -8,4 +8,11 @@
         android:title="About"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/search"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="Search"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="collapseActionView|ifRoom" />
+
 </menu>
